@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vault OS Terminal</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+    }
+    #terminal {
+      white-space: pre-wrap;
+      height: 80vh;
+      overflow-y: auto;
+      border: 1px solid #444;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #000;
+    }
+    #input {
+      width: 100%;
+      background: #000;
+      border: none;
+      color: #0f0;
+      font-family: inherit;
+      font-size: 16px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal">📀 Welcome to Vault OS 1.0 — Your Personal Password Commander
+-------------------------------------------------------------
+Type one of the following commands:
+
+▶ greet  
+▶ show  
+▶ add google user123 password  
+▶ edit google user123 newpass  
+▶ delete google user123
+
+Type below and hit ENTER ⬇️
+
+</div>
+  <input type="text" id="input" autocomplete="off" placeholder="Type a command...">
+  
+  <script>
+    const terminal = document.getElementById("terminal");
+    const input = document.getElementById("input");
+
+    const print = (text) => {
+      terminal.innerText += "\n" + text;
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    input.addEventListener("keydown", async function (e) {
+      if (e.key === "Enter") {
+        const commandText = input.value.trim();
+        if (commandText === "") return;
+
+        print("💻 > " + commandText);
+        input.value = "";
+
+        const parts = commandText.split(" ");
+        const cmd = parts[0];
+        const args = parts.slice(1);
+
+        try {
+          const res = await fetch("https://vault-os-backend.onrender.com/command", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cmd, args })
+          });
+
+          const data = await res.json();
+          print("🟢 " + data.output);
+        } catch (err) {
+          print("❌ Error connecting to Vault OS backend.");
+        }
+      }
+    });
+  </script>
+</body>
+</html>
