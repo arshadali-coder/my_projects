@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Logo Maker - Ultimate Upgrade</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Import Many Fancy Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Monoton&family=Zen+Dots&family=Rampart+One&family=Bungee+Shade&family=Black+Ops+One&family=Rubik+Iso&family=Permanent+Marker&family=Big+Shoulders+Stencil+Display&family=Creepster&family=Exo+2:wght@700&family=Faster+One&family=Lobster&family=Patua+One&family=Russo+One&family=Sriracha&family=Tourney:wght@900&family=UnifrakturMaguntia&family=Ultra&family=Flamenco&family=Chakra+Petch:wght@700&family=Metal+Mania&family=Iceberg&family=Stalinist+One&family=Dokdo&display=swap" rel="stylesheet">
+
+  <style>
+    /* Global Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Background & Container */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 850px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      padding: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00c6ff, #ff00ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+    
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Preview Area */
+    #preview {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 1;
+      margin: 20px auto;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    #preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+    /* Logo Text Styling */
+    #logoText {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: clamp(2rem, 8vw, 5rem);
+      max-width: 90%;
+      white-space: normal;
+      word-wrap: break-word;
+      pointer-events: none;
+      /* Default Neon Glow (overridden by effect classes) */
+      text-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.5);
+    }
+
+    
+    
+    /* Effects */
+
+.notice {
+  margin: 20px 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: #FFD700; /* Yellow Background */
+  color: #333; /* Dark Text for Contrast */
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* Glow Effect */
+  animation: pulse 1.5s infinite alternate; /* Subtle Animation */
+}
+
+/* Gentle Pulsating Animation */
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.03);
+  }
+}
+    
+
+    
+    .neon {
+      text-shadow:
+        0 0 25px rgba(0, 255, 255, 0.9),
+        0 0 50px rgba(0, 255, 255, 0.8),
+        0 0 80px rgba(0, 255, 255, 0.7);
+      animation: neonGlow 1.5s alternate infinite;
+    }
+    
+    @keyframes neonGlow {
+      from { text-shadow: 0 0 20px cyan, 0 0 40px cyan; }
+      to { text-shadow: 0 0 30px magenta, 0 0 50px magenta; }
+    }
+    
+    .fire {
+      text-shadow:
+        0 0 25px rgba(255, 85, 0, 0.9),
+        0 0 50px rgba(255, 50, 0, 0.8),
+        0 0 90px rgba(255, 0, 0, 0.7);
+      animation: fireFlicker 1.5s infinite alternate;
+    }
+    
+    @keyframes fireFlicker {
+      from { text-shadow: 0 0 25px rgba(255,85,0,0.9); }
+      to { text-shadow: 0 0 40px rgba(255,120,0,1); }
+    }
+    
+    .glitch {
+      text-shadow:
+        -3px 0 5px rgba(255, 0, 0, 0.8),
+        3px 0 5px rgba(0, 255, 255, 0.8);
+      animation: glitchShake 0.2s infinite alternate;
+    }
+    
+    @keyframes glitchShake {
+      0% { transform: translateX(-2px); }
+      100% { transform: translateX(2px); }
+    }
+
+    .vintage {
+  filter: sepia(60%);
+  text-shadow: 1px 1px 2px #000;
+    }
+
+    
+    .shadowPulse {
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0% { text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
+  100% { text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); }
+}
+
+    
+    .rainbowGlow {
+  animation: rainbowGlowAnim 3s infinite;
+}
+@keyframes rainbowGlowAnim {
+  0% { text-shadow: 0 0 10px red; }
+  20% { text-shadow: 0 0 10px orange; }
+  40% { text-shadow: 0 0 10px yellow; }
+  60% { text-shadow: 0 0 10px green; }
+  80% { text-shadow: 0 0 10px blue; }
+  100% { text-shadow: 0 0 10px violet; }
+}
+
+
+    .outlineGlow {
+  color: transparent;
+  -webkit-text-stroke: 1px white;
+  text-shadow: 0 0 5px white, 0 0 10px white;
+    }
+
+
+    .jitter {
+  animation: jitterAnim 0.1s infinite;
+}
+@keyframes jitterAnim {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(2px, -2px); }
+  50% { transform: translate(-2px, 2px); }
+  75% { transform: translate(2px, 2px); }
+  100% { transform: translate(-2px, -2px); }
+}
+    
+
+
+    
+    /* Buttons */
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      color: white;
+      transition: box-shadow 0.4s;
+    }
+    
+    button:hover {
+      box-shadow: 0 0 25px #00c6ff;
+    }
+    
+    /* Footer */
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    @media (max-width: 600px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+  
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Neon Logo Maker</h1>
+      <p>Create stunning AI-generated logos!</p>
+    </div>
+
+    <div class="form-group">
+      <label for="logoInput">Naam Likhiye !!</label>
+      <input type="text" id="logoInput" placeholder="Your Name Here">
+    </div>
+
+    <div id="preview">
+      <img id="previewImage" src="" alt="AI Background">
+      <div id="logoText" class="neon">Your Name Here</div>
+    </div>
+
+    <!-- Buttons -->
+    <button id="generateBtn">Generate AI Logo</button>
+    <button id="comboBtn">Combo Effects (2)</button>
+    <button id="superBtn">Super Effects (3)</button>
+    <button id="downloadBtn">Download Logo</button>
+    <div class="notice">
+  ⚠️ Agar Download Nahi Ho Rha To Site Setting Mein Jaake "Automatic Downloads" On Kar Dijiye.
+</div>
+
+    
+    <div class="footer">
+      <p>Made with ❤️ by Arshad & ChatGPT – Because a berozgar aspirant has no limits.</p>
+    </div>
+  </div>
+
+  <!-- html2canvas for downloading the logo -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <script>
+    // Replace with your Unsplash API key if needed
+    const unsplashAccessKey = '6FJjoJ8A2BB1FgI9P2ZZYq20Cmi88jHrOSkdn1CI8fw';
+    
+    // DOM Elements
+    const logoInput = document.getElementById('logoInput');
+    const previewImage = document.getElementById('previewImage');
+    const logoText = document.getElementById('logoText');
+    const generateBtn = document.getElementById('generateBtn');
+    const comboBtn = document.getElementById('comboBtn');
+    const superBtn = document.getElementById('superBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    
+    
+    // Arrays for Fonts & Effects
+    const fonts = [
+      "Orbitron", "Monoton", "Zen Dots", "Rampart One",
+      "Press Start 2P", "Bungee Shade", "Black Ops One", "Rubik Iso",
+      "Permanent Marker", "Big Shoulders Stencil Display", "Creepster",
+      "Exo 2", "Faster One", "Lobster", "Patua One",
+      "Russo One", "Sriracha", "Tourney", "UnifrakturMaguntia", "Ultra",
+      "Flamenco", "Chakra Petch", "Metal Mania", "Iceberg",
+      "Stalinist One", "Dokdo"
+    ];
+
+  
+    
+    // Global effects array
+    const effects = ["neon", "fire", "glitch", "outlineGlow", "rainbowGlow", "shadowPulse", "vintage"];
+    
+    // Prompts for background images
+    const prompts = [
+      "futuristic neon", "cyberpunk city", "holographic waves", "luxury dark", "retro neon sign",
+      "Fiery flames with intense red and orange glow, cinematic lighting",
+      "Blazing inferno with sparks and embers flying, dark background",
+      "Neon fire vortex, glowing heat waves, dramatic firestorm"
+    ];
+    
+    // Fetch a random background image from Unsplash using a random prompt
+    async function fetchBackground() {
+      const prompt = prompts[Math.floor(Math.random() * prompts.length)];
+      const response = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(prompt)}&client_id=${unsplashAccessKey}`);
+      const data = await response.json();
+      return data.urls.regular;
+    }
+    
+    // Improved color extraction: returns a contrasting color based on luminance
+    function extractContrastingColor(img) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.drawImage(img, 0, 0);
+      const pixel = ctx.getImageData(0, 0, 1, 1).data;
+      const [r, g, b] = pixel;
+      const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+      return luminance > 128 ? 'black' : 'white';
+    }
+    
+    // Update the logo text when user types
+    logoInput.addEventListener('input', () => {
+      logoText.textContent = logoInput.value || 'Your Logo Here';
+    });
+    
+    // Helper: Get a random font
+    const getRandomFont = () => fonts[Math.floor(Math.random() * fonts.length)];
+    
+    // Helper: Apply a specified number of unique random effects
+    const applyEffects = (count = 1) => {
+      // Remove any existing effects
+      logoText.classList.remove(...effects);
+      const chosenEffects = [];
+      while (chosenEffects.length < count) {
+        const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+        if (!chosenEffects.includes(randomEffect)) {
+          chosenEffects.push(randomEffect);
+        }
+      }
+      logoText.classList.add(...chosenEffects);
+    };
+    
+    // "Generate AI Logo" button: 1 random effect + new background + dynamic font & contrasting color
+    generateBtn.addEventListener('click', async () => {
+      const bgUrl = await fetchBackground();
+      previewImage.setAttribute("crossorigin", "anonymous");
+      previewImage.src = bgUrl;
+      previewImage.onload = () => {
+        // Random font selection
+        logoText.style.fontFamily = getRandomFont();
+        // Dynamic contrasting color matching
+        logoText.style.color = extractContrastingColor(previewImage);
+        // Apply one random effect
+        applyEffects(1);
+      };
+    });
+    
+    // "Combo Effects" button: 2 random effects
+    comboBtn.addEventListener('click', () => {
+      logoText.style.fontFamily = getRandomFont();
+      applyEffects(2);
+    });
+    
+    // "Super Effects" button: 3 random effects
+    superBtn.addEventListener('click', () => {
+      logoText.style.fontFamily = getRandomFont();
+      applyEffects(3);
+    });
+// Updated Download Logic: Capture Cropped Background with Random Number Filename
+downloadBtn.addEventListener('click', async () => {
+  const preview = document.querySelector("#preview");
+
+  // Temporarily remove border-radius for square corners
+  const originalBorderRadius = preview.style.borderRadius;
+  preview.style.borderRadius = "0";
+
+  // Ensure image loads with cross-origin
+  previewImage.setAttribute("crossorigin", "anonymous");
+
+  // Generate a random number between 1000 and 9999
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+
+  // Wait for the image to load before capturing
+  previewImage.onload = () => {
+    html2canvas(preview, {
+      useCORS: true,
+      allowTaint: true,
+      scale: 2, // High-quality output
+      width: preview.clientWidth,
+      height: preview.clientHeight,
+    }).then((canvas) => {
+      const link = document.createElement("a");
+      link.download = `AI-Logo-${randomNumber}.png`; // Filename with random number
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+
+      // Restore original border-radius after download
+      preview.style.borderRadius = originalBorderRadius;
+    });
+  };
+
+  // Force image reload to capture with CORS
+  previewImage.src = previewImage.src;
+});
+
+
+
+
+
+  
+  </script>
+  
+</body>
+
+  </html>
