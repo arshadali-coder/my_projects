@@ -28,4 +28,25 @@ Welcome to **Vault OS 1.0**, your private command-line-based password vault, sty
 2. Follow the on-screen instructions like a true terminal wizard 🧙‍♂️
 
 ## 📁 Project Structure
+vault-os/
+├── vault.py # Main script
+└── database.json # Auto-generated when you save your first entry
 
+
+## 🔒 Disclaimer
+
+This is a **beginner-friendly project** meant for learning. For actual password storage, consider using industry-standard password managers with encryption.
+
+---
+
+## ✨ Why This Project?
+
+This is a clean demonstration of:
+- Working with files (JSON)
+- CLI-based user interface
+- Logical branching and loops
+- Real-world utility using just standard Python
+
+## 🤝 Contribute / Feedback?
+
+Feel free to fork the repo and create pull requests or open issues. Let’s make Vault OS even more badass!
