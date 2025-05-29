@@ -1,4 +1,3 @@
-
 import json
 import time
 from pathlib import Path
@@ -71,14 +70,14 @@ def edit_password():
         for i, (key, value) in enumerate(data.items(), start=1):
             temp_data[f"key_{i}"] = key
             a, b = key.split("_")
-            type_print(f"{i}. {a}'s {b} -> {value}\n")
+            type_print(f"{i}. {b}'s {a} account -> {value}\n")
         number = input("🛠️ Enter number to update: ")
         while True:
             fstring = f"key_{number}"
             key_in_process = temp_data.get(fstring)
             if key_in_process:
                 a1, b1 = key_in_process.split("_")
-                new_pass = input(f"🔄 New password for {b1}'s {a1}: ")
+                new_pass = input(f"🔄 New password for {b1}'s {a1} account: ")
                 data[key_in_process] = new_pass
                 with open(database, "w") as f:
                     json.dump(data, f, indent=4)
@@ -97,7 +96,7 @@ def del_password():
         for i, (key, value) in enumerate(data.items(), start=1):
             temp_data[f"key_{i}"] = key
             a, b = key.split("_")
-            type_print(f"{i}. {a}'s {b} -> {value}\n")
+            type_print(f"{i}. {b}'s {a} account -> {value}\n")
         number = input("🧨 Enter number to delete: ")
         while True:
             fstring = f"key_{number}"
@@ -114,4 +113,3 @@ def del_password():
 
 if __name__ == "__main__":
     main_menu()
-      
