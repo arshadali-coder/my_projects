@@ -28,10 +28,12 @@ Welcome to **Vault OS 1.0**, your private command-line-based password vault, sty
 2. Follow the on-screen instructions like a true terminal wizard 🧙‍♂️
 
 ## 📁 Project Structure
+
+```
 vault-os/
 ├── vault.py # Main script
 └── database.json # Auto-generated when you save your first entry
-
+```
 
 ## 🔒 Disclaimer
 
