@@ -97,6 +97,26 @@
       font-weight: 400;
     }
 
+    .github-link {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--accent);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s ease;
+      z-index: 999;
+    }
+
+    .github-link:hover {
+      background-color: var(--secondary);
+      color: #2c003e;
+    }
+
     footer {
       margin-top: 60px;
       color: #aaa;
@@ -107,27 +127,28 @@
   </style>
 </head>
 <body>
+  <a class="github-link" href="https://github.com/arshadali-coder/" target="_blank">🌟 My GitHub</a>
   <h1>Welcome to My Project Hub 🚀</h1>
-  <p class="subtitle">Explore some of my vibe-coded creations</p>
+  <p class="subtitle">Explore from some of my creations</p>
 
   <div class="project-grid">
     <a href="https://arshadali-projects.netlify.app/logo_maker/" target="_blank">
       <div class="project-card">
         <h2>AI Logo Maker 🎨</h2>
-        <p>Takes a name input from the user to generate an AI-styled background with the name on top. Includes options for text styles and effects. One of my early vibe-coded projects.</p>
+        <p>Takes a name input from the user to generate an AI-styled background with the name on top. Includes options for text styles and effects. This is fully prompt engineered project.</p>
       </div>
     </a>
 
     <a href="https://arshadali-projects.netlify.app/vault-os/" target="_blank">
       <div class="project-card">
         <h2>Vault OS v1.0 🔐</h2>
-        <p>Manage your passwords with our brand new VaultOS v1.0. A simple, secure, and minimal password manager for daily use.</p>
+        <p>Manage your passwords with this brand new VaultOS v1.0. A simple, secure, and minimal password manager for daily use. Coded in python 100% by me</p>
       </div>
     </a>
   </div>
 
   <footer>
-    © 2025 Arshad Ali | Made with 🔥 and 💻
+    © 2025 Arshad Ali | Made with bugs & love
   </footer>
 </body>
 </html>
