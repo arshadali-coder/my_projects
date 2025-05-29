@@ -12,6 +12,10 @@ greet = "\n📀 Welcome to Vault OS 1.0 — Your Personal Password Commander\n--
 
 database = Path(__file__).parent / "database.json"
 
+def clear():
+    import os
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def load_data():
     global data
     try:
@@ -22,19 +26,25 @@ def load_data():
 
 def main_menu():
     while True:
+        clear()
         type_print(greet, 0.01)
         load_data()
         choice = input("--> Vault OS command: ")
 
         if choice == "1":
+            clear()
             show_passwords()
         elif choice == "2":
+            clear()
             add_password()
         elif choice == "3":
+            clear()
             edit_password()
         elif choice == "4":
+            clear()
             del_password()
         elif choice == "5":
+            clear()
             type_print("\n🛡️ Shutting down Vault OS... Stay secure, Commander!\n")
             sys.exit()
         else:
