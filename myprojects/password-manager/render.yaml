@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: vault-backend
-    runtime: python
-    buildCommand: ""
-    startCommand: python app.py
