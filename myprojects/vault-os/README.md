@@ -27,6 +27,8 @@ Welcome to **Vault OS 1.0**, your private command-line-based password vault, sty
 
 2. Follow the on-screen instructions like a true terminal wizard 🧙‍♂️
 
+💡 **Pro Tip:** If you're facing issues running all three commands at once, try copying and pasting them **one by one** in your terminal.
+
 ## 📁 Project Structure
 
 ```
