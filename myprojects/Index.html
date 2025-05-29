@@ -6,28 +6,32 @@
   <title>My Project Hub</title>
   <style>
     :root {
-      --primary: #ff6f61; /* Reddish-orange */
-      --secondary: #ffcc00; /* Yellowish */
-      --accent: #9c27b0; /* Violet */
+      --primary: #ff6f61;
+      --secondary: #ffcc00;
+      --accent: #9c27b0;
       --background: linear-gradient(135deg, #2c003e, #4a001c, #3b2100);
       --card-bg: rgba(42, 42, 64, 0.95);
       --text-color: #ffffff;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Poppins', sans-serif;
       background: var(--background);
       background-attachment: fixed;
       background-size: cover;
       color: var(--text-color);
       margin: 0;
-      padding: 40px 20px;
+      padding: 20px;
       text-align: center;
     }
 
     h1 {
-      font-size: 3.6rem;
-      margin-bottom: 10px;
+      font-size: 2.8rem;
+      margin: 0.5em 0 0.2em;
       color: var(--primary);
       font-weight: 800;
       letter-spacing: 1.2px;
@@ -38,42 +42,35 @@
     }
 
     @keyframes gradientText {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     p.subtitle {
       color: var(--secondary);
-      font-size: 1.3rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
     }
 
     .project-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      margin-top: 50px;
+      gap: 25px;
+      margin-top: 20px;
+      padding: 0 10px;
     }
 
     .project-card {
       background: var(--card-bg);
-      padding: 30px 25px;
+      padding: 24px 20px;
       border-radius: 18px;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      text-align: center;
     }
 
     .project-card:hover {
-      transform: translateY(-12px);
+      transform: translateY(-10px);
       box-shadow: 0 14px 28px rgba(255, 204, 0, 0.4);
     }
 
@@ -82,31 +79,29 @@
       color: inherit;
     }
 
-    h2 {
+    .project-card h2 {
+      font-size: 1.6rem;
       color: var(--accent);
-      margin-top: 0;
-      font-size: 1.8rem;
+      margin: 0 0 10px;
       font-weight: 600;
     }
 
     .project-card p {
-      font-size: 1.05rem;
-      line-height: 1.7;
+      font-size: 0.98rem;
+      line-height: 1.6;
       color: #e0e0e0;
-      margin-top: 10px;
-      font-weight: 400;
     }
 
     .github-link {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 15px;
+      right: 15px;
       background-color: var(--accent);
       color: white;
-      padding: 10px 18px;
-      border-radius: 30px;
+      padding: 10px 16px;
+      border-radius: 25px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
       transition: background 0.3s ease;
       z-index: 999;
@@ -118,9 +113,25 @@
     }
 
     footer {
-      margin-top: 60px;
-      color: #aaa;
+      margin-top: 40px;
+      color: #bbb;
       font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .project-card h2 {
+        font-size: 1.4rem;
+      }
+      .project-card p {
+        font-size: 0.9rem;
+      }
+      .github-link {
+        font-size: 0.8rem;
+        padding: 8px 14px;
+      }
     }
 
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -128,7 +139,7 @@
 </head>
 <body>
   <a class="github-link" href="https://github.com/arshadali-coder/" target="_blank">🌟 My GitHub</a>
-  <h1>Welcome to My Project Hub 🚀</h1>
+  <h1>🚀 Welcome to My Project Hub</h1>
   <p class="subtitle">Explore from some of my creations</p>
 
   <div class="project-grid">
