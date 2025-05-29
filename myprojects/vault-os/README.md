@@ -20,9 +20,9 @@ Welcome to **Vault OS 1.0**, your private command-line-based password vault, sty
 
 1. Clone this repo or copy the code into a Python file:
     ```bash
-    git clone https://github.com/yourusername/vault-os.git
-    cd vault-os
-    python vault.py
+    git clone https://github.com/arshadali-coder/my_projects.git
+    cd my_projects/myprojects/vault-os
+    python vault-os.py
     ```
 
 2. Follow the on-screen instructions like a true terminal wizard 🧙‍♂️
