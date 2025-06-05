@@ -39,7 +39,7 @@ This repository is licensed under the [MIT License](./LICENSE).
 ## 🙋‍♂️ About Me
 
 I'm a developer passionate about **AI, ML, and Game Development**.  
-Currently exploring in different directionsthrough small projects and open-source experiments.
+Currently exploring in different directions through small projects and open-source experiments.
 
 Feel free to follow or connect — I’m always open to feedback and collaboration!
 
