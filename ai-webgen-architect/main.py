@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import google.generativeai as genai
 import os
 
-client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 app = Flask(__name__, static_folder='static')
 
@@ -83,8 +83,9 @@ Do not include any markdown, comments, or explanations — only raw HTML code.
 🔧 Purpose:
 {user_requirement}"""
 
-        response = client.models.generate_content(
-        model="gemini-2.5-flash-preview-05-20", contents=gemini_prompt
+        response = genai.generate_content(
+    model="gemini-2.5-flash-preview-05-20",
+    contents=gemini_prompt
         )
 
         raw_html = response.text
