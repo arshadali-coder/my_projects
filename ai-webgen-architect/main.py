@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from google import genai
+import google.generativeai as genai
 import os
 
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
