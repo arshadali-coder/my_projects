@@ -82,11 +82,11 @@ Do not include any markdown, comments, or explanations — only raw HTML code.
 
 🔧 Purpose:
 {user_requirement}"""
+# Gemini model instance
+        model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
 
-        response = genai.generate_content(
-    model="gemini-2.5-flash-preview-05-20",
-    contents=gemini_prompt
-        )
+# Response from the model
+        response = model.generate_content("Hello, world!")
 
         raw_html = response.text
         cleaned_html = clean_gemini_output(raw_html)
