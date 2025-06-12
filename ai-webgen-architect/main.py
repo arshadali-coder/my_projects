@@ -90,8 +90,8 @@ Do not include any markdown, comments, or explanations — only raw HTML code.
 
         raw_html = response.text
         cleaned_html = clean_gemini_output(raw_html)
-        print("Raw HTML:", raw_html)
-        print("Cleaned HTML:", cleaned_html)
+            
+        print(user_requirement)
         
         os.makedirs(STATIC_DIR, exist_ok=True)
 
