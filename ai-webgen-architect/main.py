@@ -86,7 +86,7 @@ Do not include any markdown, comments, or explanations — only raw HTML code.
         model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
 
 # Response from the model
-        response = model.generate_content("Hello, world!")
+        response = model.generate_content(gemini_prompt)
 
         raw_html = response.text
         cleaned_html = clean_gemini_output(raw_html)
