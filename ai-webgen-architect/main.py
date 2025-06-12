@@ -1,11 +1,8 @@
 from flask import Flask, render_template, request
 from google import genai
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
-api_key = os.getenv("GOOGLE_API_KEY")
-client = genai.Client(api_key=api_key)
+client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 app = Flask(__name__, static_folder='static')
 
@@ -29,31 +26,65 @@ def home():
     cleaned_html=""
     if request.method == "POST":
         user_requirement = request.form.get("prompt")
-        gemini_prompt = f"""
-Generate a complete, well-structured, and **highly advanced** web application in a single HTML file.
-Include all necessary HTML, CSS (within <style> tags) and JavaScript (within <script> tags). Ensure the design is **modern, visually stunning, highly responsive across all devices (mobile, tablet, desktop), and aesthetically pleasing with a professional product feel**.
+        gemini_prompt = f"""Generate a complete, single-file advanced frontend web application in pure HTML.
+Include embedded CSS (within <style>) and JavaScript (within <script>).
+The output must be self-contained, without external files (except for linked fonts or libraries).
 
-**Prioritize an engaging default background that makes the entire design look cohesive and good.**
-**Use funky, vibrant, and contemporary color palettes** that resonate with today's generation's aesthetic.
-**Implement sophisticated layouts** using advanced CSS Grid or Flexbox, possibly with overlapping elements, complex section divisions, and innovative spacing.
-**Incorporate dynamic animations and transitions** for elements, especially on hover, click, and view changes, using smooth, non-linear easing functions for a fluid user experience.
-**Include rich interactive elements**, such as:
-- A responsive image carousel/slider with smooth transitions.
-- Detailed sections that might have expandable/collapsible content (e.g., FAQs, feature descriptions).
-- Interactive forms or input elements with visual feedback.
-- Smooth JavaScript interactions for dynamic content loading or user interface updates.
+✅ Design Requirements:
 
-Use Tailwind CSS classes loaded from CDN by including `<script src="https://cdn.tailwindcss.com"></script>` in the head. Use the 'Inter' font.
-If any images are provided as inline data, use them directly. If no images are provided, then use descriptive placeholder images from 'https://placehold.co/{{width}}x{{height}}/{{background hex}}/{{text hex}}?text={{text}}'.
+Use Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
 
-**Do NOT include any branding related to "Design with Love From India BY Soumya Sagar" or any associated logo or link.** The generated website should be a clean, standalone product.
+Use a Google Font M PLUS Rounded 1c - <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
 
-Do not include any conversational text, explanations, or markdown fences. Focus solely on the code required to build the website described above.
+Layout must be modern, responsive, and aesthetically vibrant using a funky Gen-Z color scheme.
 
-The website is for {user_requirement}
-"""
+Build layout using advanced CSS Grid / Flexbox (with overlapping elements, layered sections, etc.).
+
+Add smooth animations & transitions with easing like ease-in-out or cubic-bezier on hover, scroll, click, etc.
+
+⚙️ Functional Features:
+A responsive image slider/carousel with swipe/autoplay.
+
+Expandable/collapsible sections (like FAQs or descriptions).
+
+Interactive forms with real-time validation/feedback.
+
+Dynamic UI updates using JavaScript for better interactivity.
+
+🧠 Technical Note:
+This project is built using vanilla JavaScript only, without frameworks like React or Next.js.
+This ensures:
+
+Faster loading with zero build setup.
+
+Full control over the DOM.
+
+Easy embedding and portability as a single HTML file.
+
+🎨 Optional Enhancements based on purpose:
+Theme toggle (light/dark mode)
+
+Parallax scrolling
+
+Lottie animations
+
+Page loader or progress bar
+
+🖼️ Images:
+Use descriptive placeholder images from:
+https://placehold.co/{{width}}x{{height}}/{{bg_hex}}/{{text_hex}}?text={{text}}
+if no inline images are provided.
+
+❌ Restrictions:
+Do not include any branding, credits, watermarks, or mentions of “Arshad Ali”.
+
+Do not include any markdown, comments, or explanations — only raw HTML code.
+
+🔧 Purpose:
+{user_requirement}"""
+
         response = client.models.generate_content(
-        model="gemini-2.0-flash", contents=gemini_prompt
+        model="gemini-2.5-flash-preview-05-20", contents=gemini_prompt
         )
 
         raw_html = response.text
@@ -67,7 +98,7 @@ The website is for {user_requirement}
             f.write(cleaned_html)
 
     show_iframe = os.path.exists(f"{STATIC_DIR}/generated_site.html")
-    return render_template("index.html", show_iframe=show_iframe)
+    return render_template("trial.html", show_iframe=show_iframe)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,)
