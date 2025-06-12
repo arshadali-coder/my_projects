@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: ai-webgen-architect
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn main:app
+    autoDeploy: true
