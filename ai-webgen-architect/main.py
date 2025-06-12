@@ -99,7 +99,7 @@ Do not include any markdown, comments, or explanations — only raw HTML code.
             f.write(cleaned_html)
 
     show_iframe = os.path.exists(f"{STATIC_DIR}/generated_site.html")
-    return render_template("trial.html", show_iframe=show_iframe)
+    return render_template("index.html", show_iframe=show_iframe)
 
 if __name__ == "__main__":
     app.run(debug=True,)
