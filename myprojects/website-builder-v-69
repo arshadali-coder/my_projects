@@ -1,0 +1,852 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDocs, collection, query, onSnapshot, deleteDoc } from 'firebase/firestore';
+
+// Lucide React Icons
+import { MessageSquare, Code, Monitor, Download, Copy, Rocket, ChevronLeft, ChevronDown, ChevronUp, Image, XCircle } from 'lucide-react';
+
+// Custom styles for scrollbars, body font, and keyframes for animations
+const customStyles = `
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutLeft {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #0d1117; /* Even darker base */
+    }
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: #3b424e #222831; /* thumb and track color */
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 8px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: #222831;
+        border-radius: 10px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: #3b424e;
+        border-radius: 10px;
+        border: 2px solid #222831;
+    }
+    iframe {
+        border: none;
+        width: 100%;
+        height: 100%;
+        background-color: #f0f0f0; /* Default light background for preview, can be customized by generated code */
+        border-radius: 0.75rem; /* rounded-xl */
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5); /* Inner shadow for depth */
+    }
+    .chat-bubble-user {
+        background-color: #6366f1; /* Indigo-500 for user */
+        color: #e0e7ff; /* Lighter text */
+        border-bottom-right-radius: 0;
+    }
+    .chat-bubble-ai {
+        background-color: rgba(55, 65, 81, 0.6); /* Translucent Gray-700 for AI */
+        color: #d1d5db; /* Lighter text */
+        border-bottom-left-radius: 0;
+        border: 1px solid rgba(107, 114, 128, 0.4); /* More prominent border */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Added shadow */
+    }
+    .panel-bg {
+        background-color: rgba(26, 32, 44, 0.4); /* More transparent */
+        backdrop-filter: blur(12px); /* Increased blur */
+        border: 2px solid rgba(74, 85, 104, 0.2); /* Slightly more prominent border */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7); /* Stronger shadow */
+    }
+    .input-bg {
+        background-color: rgba(45, 55, 72, 0.5); /* More transparent */
+        border: 1px solid rgba(74, 85, 104, 0.6); /* More prominent border */
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4); /* Inner shadow for depth */
+    }
+    .border-accent {
+        border-color: #6366f1; /* Indigo accent for focus */
+    }
+
+    /* === Enhanced Glassy Button Styles with Pronounced Bouncy Animations === */
+    .btn-base {
+        padding: 0.625rem 1rem; /* py-2.5 px-4 equivalent */
+        border-radius: 0.5rem; /* rounded-lg */
+        font-weight: 600; /* font-semibold */
+        color: #e0e7ff; /* text-white */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem; /* gap-2 */
+        cursor: pointer;
+        outline: none;
+        position: relative; /* For inner elements */
+        overflow: hidden; /* For pseudo-elements or inner shadows */
+        /* More aggressive cubic-bezier for a strong bounce */
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Pronounced bouncy easing */
+        transform: scale(1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Initial soft shadow */
+        border: 1px solid transparent; /* Base for subtle border */
+    }
+
+    .btn-base::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), /* Inner light border */
+                    inset 0 1px 2px rgba(0, 0, 0, 0.2); /* Inner shadow */
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-base:hover {
+        transform: scale(1.1); /* Even more pronounced lift for stronger bounce */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7); /* Darker, larger shadow on hover */
+    }
+
+    .btn-base:active {
+        transform: scale(0.9); /* Deeper press for stronger bounce */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Smaller shadow on press */
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Faster snap back on active */
+    }
+
+    /* Specific button colors */
+    .btn-primary {
+        background-image: linear-gradient(to right, #6366f1, #8b5cf6); /* Indigo-500 to Purple-500 */
+        border-color: rgba(99, 102, 241, 0.5); /* Blue border */
+    }
+    .btn-primary:hover {
+        background-image: linear-gradient(to right, #4f46e5, #7c3aed); /* Darker on hover */
+    }
+
+    .btn-secondary-purple {
+        background-color: rgba(139, 92, 246, 0.8); /* Purple-500 with transparency */
+        border-color: rgba(139, 92, 246, 0.5);
+        background-image: none; /* Remove gradient for solid color with glass */
+    }
+    .btn-secondary-purple:hover {
+        background-color: rgba(124, 58, 237, 0.9); /* Darker on hover with more opacity */
+        background-image: none;
+    }
+
+    .btn-secondary-green {
+        background-color: rgba(16, 185, 129, 0.8); /* Green-500 with transparency */
+        border-color: rgba(16, 185, 129, 0.5);
+        background-image: none;
+    }
+    .btn-secondary-green:hover {
+        background-color: rgba(5, 150, 105, 0.9); /* Green-600 with more opacity */
+        background-image: none;
+    }
+
+    .btn-secondary-blue {
+        background-color: rgba(59, 130, 246, 0.8); /* Blue-500 with transparency */
+        border-color: rgba(59, 130, 246, 0.5);
+        background-image: none;
+    }
+    .btn-secondary-blue:hover {
+        background-color: rgba(37, 99, 235, 0.9); /* Blue-600 with more opacity */
+        background-image: none;
+    }
+
+    .btn-secondary-gray {
+        background-color: rgba(75, 85, 99, 0.8); /* Gray-600 with transparency */
+        border-color: rgba(75, 85, 99, 0.5);
+        background-image: none;
+    }
+    .btn-secondary-gray:hover {
+        background-color: rgba(55, 65, 81, 0.9); /* Gray-700 with more opacity */
+        background-image: none;
+    }
+
+    /* Rest of the styles remain as before */
+    .preview-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    .preview-slide-in {
+        animation: slideInRight 0.5s ease-out forwards;
+    }
+    .preview-slide-out {
+        animation: slideOutLeft 0.5s ease-out forwards;
+    }
+    .branding-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(13, 17, 23, 0.95); /* Semi-transparent dark overlay */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        color: white;
+        text-align: center;
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+    .branding-overlay.fade-out {
+        animation: fadeOut 0.5s ease-out forwards;
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    .branding-logo {
+        animation: bounce 1s infinite alternate;
+        margin-bottom: 1.5rem; /* Tailwind mb-6 equivalent */
+    }
+    .deployment-modal {
+        background-color: rgba(26, 32, 44, 0.7); /* Slightly more transparent */
+        backdrop-filter: blur(15px); /* Increased blur for modal */
+        border: 2px solid rgba(74, 85, 104, 0.4); /* More prominent border */
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.95); /* Even stronger shadow */
+    }
+    .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        max-height: 80px; /* Limit height for previews */
+        overflow-y: auto;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: rgba(45, 55, 72, 0.3); /* Slightly transparent background */
+        border: 1px solid rgba(74, 85, 104, 0.4);
+    }
+    .image-preview-item {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        border-radius: 0.375rem;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .image-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .remove-image-btn {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background-color: rgba(220, 38, 38, 0.8); /* Red-600 with transparency */
+        border-radius: 50%;
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+    .remove-image-btn:hover {
+        opacity: 1;
+    }
+    .notification {
+        position: fixed;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(28, 114, 203, 0.9); /* A nice blue for notifications */
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        z-index: 1001;
+        opacity: 0;
+        animation: fadeIn 0.3s forwards;
+    }
+    .notification.hide {
+        animation: fadeOut 0.3s forwards;
+    }
+`;
+
+function App() {
+    // Firebase states (retained for user identification, but display is removed for cleaner UI)
+    const [db, setDb] = useState(null);
+    const [auth, setAuth] = useState(null);
+    const [userId, setUserId] = useState(null); // userId is still captured for potential future features
+    const [isAuthReady, setIsAuthReady] = useState(false);
+    const [firebaseError, setFirebaseError] = useState('');
+
+    // Chat interface states
+    const [currentPrompt, setCurrentPrompt] = useState('');
+    const [chatHistory, setChatHistory] = useState([]); // Stores {role: 'user' | 'ai', content: string, isCode: boolean, isCollapsed: boolean}
+    const [isLoadingAI, setIsLoadingAI] = useState(false);
+    const [aiError, setAiError] = useState('');
+
+    // Code Preview state
+    const [previewCode, setPreviewCode] = useState('<!-- Click "Generate Advanced Code" to view your website here -->'); // Initial message
+    const [isGeneratingFirstTime, setIsGeneratingFirstTime] = useState(true); // To control initial animation of preview panel
+    const previewIframeRef = useRef(null);
+    const chatHistoryEndRef = useRef(null); // Ref for scrolling to the bottom of chat
+
+    // Branding Overlay state
+    const [showBrandingOverlay, setShowBrandingOverlay] = useState(false);
+
+    // Deployment Modal state
+    const [showDeploymentModal, setShowDeploymentModal] = useState(false);
+
+    // State to manage the exit animation for the preview panel
+    const [isHidingPreview, setIsHidingPreview] = useState(false);
+
+    // Image Upload State
+    const [selectedImages, setSelectedImages] = useState([]); // Stores {dataUrl: string, mimeType: string}
+    const fileInputRef = useRef(null);
+
+    // Notification state for copy/download actions
+    const [notificationMessage, setNotificationMessage] = useState('');
+    const [showNotification, setShowNotification] = useState(false);
+
+
+    // --- Firebase Initialization and Auth ---
+    useEffect(() => {
+        try {
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            if (Object.keys(firebaseConfig).length === 0) {
+                console.error("Firebase config is empty. Please ensure __firebase_config is correctly set.");
+                setFirebaseError("Firebase is not configured. User identification won't work.");
+                return;
+            }
+            const app = initializeApp(firebaseConfig);
+            const firestore = getFirestore(app);
+            const authInstance = getAuth(app);
+
+            setDb(firestore);
+            setAuth(authInstance);
+
+            const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
+                if (user) {
+                    setUserId(user.uid);
+                    setIsAuthReady(true);
+                } else {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(authInstance, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(authInstance);
+                        }
+                    } catch (error) {
+                        console.error("Firebase Anonymous Sign-in Error:", error);
+                        setFirebaseError(`Failed to sign in: ${error.message}`);
+                        setIsAuthReady(true);
+                    }
+                }
+            });
+
+            return () => unsubscribe();
+        } catch (e) {
+            console.error("Firebase initialization error:", e);
+            setFirebaseError(`Firebase initialization error: ${e.message}`);
+        }
+    }, []);
+
+    // Scroll chat history to bottom whenever chatHistory changes
+    useEffect(() => {
+        chatHistoryEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [chatHistory]);
+
+    // Render the generated HTML into the iframe whenever previewCode changes
+    useEffect(() => {
+        if (previewIframeRef.current) {
+            const iframe = previewIframeRef.current;
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(previewCode);
+            doc.close();
+        }
+    }, [previewCode]);
+
+    // --- Notification Handling ---
+    const showTemporaryNotification = (message) => {
+        setNotificationMessage(message);
+        setShowNotification(true);
+        setTimeout(() => {
+            setShowNotification(false);
+            setNotificationMessage(''); // Clear message after animation
+        }, 3000); // Hide after 3 seconds
+    };
+
+    // --- Image Handling Functions ---
+    const handleImageUpload = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+
+        const newImages = [];
+        files.forEach(file => {
+            if (!file.type.startsWith('image/')) {
+                showTemporaryNotification(`File "${file.name}" is not an image. Please select image files only.`);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Remove data:image/png;base64, prefix for 'data' field, keep mimeType
+                const base64Data = reader.result.split(',')[1];
+                newImages.push({ data: base64Data, mimeType: file.type, previewUrl: reader.result });
+                if (newImages.length === files.length) {
+                    setSelectedImages(prev => [...prev, ...newImages]);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+        event.target.value = ''; // Clear the input so same file can be selected again
+    };
+
+    const removeImage = (indexToRemove) => {
+        setSelectedImages(prev => prev.filter((_, index) => index !== indexToRemove));
+    };
+
+    // --- Project PixelCode X (AI) for Code Generation ---
+    const generateCodeWithAI = async () => {
+        if (!currentPrompt.trim() && selectedImages.length === 0) {
+            setAiError('Please enter a prompt or upload an image to generate code.');
+            return;
+        }
+
+        setIsLoadingAI(true);
+        setAiError('');
+        const userMessage = currentPrompt;
+        setCurrentPrompt(''); // Clear input after sending
+
+        // Add user message to chat history (text part)
+        const userChatParts = [{ text: userMessage }];
+
+        // Add image data to chat history parts if images are selected
+        if (selectedImages.length > 0) {
+            selectedImages.forEach(img => {
+                userChatParts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
+            });
+        }
+        
+        // Add user message to chat history display
+        setChatHistory(prev => [...prev, { role: 'user', content: userMessage || 'Image(s) provided.' }]); // Show "Image(s) provided." if only images are sent
+        // Add a placeholder for AI response immediately to show "Generating..."
+        setChatHistory(prev => [...prev, { role: 'ai', content: 'Generating code... This might take a moment.', isCode: false, isCollapsed: false }]); 
+
+        // Show branding overlay
+        setShowBrandingOverlay(true);
+        // Hide branding overlay after 2 seconds
+        setTimeout(() => {
+            setShowBrandingOverlay(false);
+        }, 2000); // Display for 2 seconds
+
+        // Construct history for Project PixelCode X
+        const historyForPixelCodeX = chatHistory.map(entry => ({
+            role: entry.role === 'user' ? 'user' : 'model',
+            parts: [{ text: entry.content }]
+        }));
+        
+        // Add the current user prompt and images to the history for the API call
+        historyForPixelCodeX.push({
+            role: 'user',
+            parts: [
+                { text: `Generate a complete, well-structured, and **highly advanced** web application in a single HTML file.
+                           Include all necessary HTML, CSS (within <style> tags) and JavaScript (within <script> tags).
+                           Ensure the design is **modern, visually stunning, highly responsive across all devices (mobile, tablet, desktop), and aesthetically pleasing with a professional product feel**.
+                           
+                           **Prioritize an engaging default background that makes the entire design look cohesive and good.**
+                           **Use funky, vibrant, and contemporary color palettes** that resonate with today's generation's aesthetic.
+                           
+                           **Implement sophisticated layouts** using advanced CSS Grid or Flexbox, possibly with overlapping elements, complex section divisions, and innovative spacing.
+                           **Incorporate dynamic animations and transitions** for elements, especially on hover, click, and view changes, using smooth, non-linear easing functions for a fluid user experience.
+                           **Include rich interactive elements**, such as:
+                           - A responsive image carousel/slider with smooth transitions.
+                           - Detailed sections that might have expandable/collapsible content (e.g., FAQs, feature descriptions).
+                           - Interactive forms or input elements with visual feedback.
+                           - Smooth JavaScript interactions for dynamic content loading or user interface updates.
+                           
+                           Use Tailwind CSS classes loaded from CDN by including <script src="https://cdn.tailwindcss.com"></script> in the head.
+                           Use the 'Inter' font.
+                           
+                           Crucially, if any images are provided as inline data, use them directly as the source for image elements (e.g., main hero images, gallery items) in the generated HTML. Do NOT use placeholder images from 'placehold.co' if actual images are provided. If no images are provided, then use descriptive placeholder images from 'https://placehold.co/{width}x{height}/{background color in hex}/{text color in hex}?text={text}'. For multiple images, create a gallery or multiple image elements accordingly.
+                           
+                           **Absolutely do NOT include any branding related to "Design with Love From India BY Soumya Sagar" or any associated logo or link (http://vlog.edu.ezyro.com) in the generated website's HTML.** The generated website should be a clean, standalone product.
+                           
+                           Do not include any conversational text, explanations, or markdown fences (like \`\`\`html) outside the actual code.
+                           Focus solely on the code required to build the website described by the following prompt: ${userMessage}`
+                },
+                ...selectedImages.map(img => ({ inlineData: { mimeType: img.mimeType, data: img.data } })) // Add selected images here
+            ]
+        });
+
+        try {
+            const payload = { contents: historyForPixelCodeX };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=`; // API key provided by Canvas
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json(); 
+                throw new Error(`Project PixelCode X API error: ${response.status} - ${errorData.error.message || 'Unknown error'}`);
+            }
+
+            let result;
+            let responseText = '';
+            try {
+                responseText = await response.text();
+                if (!responseText) {
+                    throw new Error("Empty response body from Project PixelCode X API.");
+                }
+                result = JSON.parse(responseText);
+            } catch (jsonError) {
+                console.error("JSON parsing error for Project PixelCode X:", jsonError);
+                console.error("Raw Project PixelCode X API response text:", responseText);
+                throw new Error(`Failed to parse Project PixelCode X API response: ${jsonError.message}. Raw: "${responseText.substring(0, 100)}..."`);
+            }
+
+            let generatedCode = "Error: No code generated.";
+            let isCodeContent = false;
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                generatedCode = result.candidates[0].content.parts[0].text;
+                
+                generatedCode = generatedCode.replace(/^```(html|css|javascript)?\s*|\s*```$/g, '').trim();
+                
+                if (generatedCode.startsWith('<!DOCTYPE html>') || generatedCode.includes('<html') || generatedCode.includes('<body') || generatedCode.includes('<div') || generatedCode.includes('<button') || generatedCode.includes('<script')) {
+                    isCodeContent = true;
+                }
+
+                if (!generatedCode.startsWith('<!DOCTYPE html>')) {
+                    generatedCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body>
+    ${generatedCode}
+</body>
+</html>`;
+                }
+
+            } else {
+                setAiError("No valid content in Project PixelCode X API response.");
+                console.warn("Project PixelCode X API response structure unexpected:", result);
+            }
+
+            setChatHistory(prev => prev.slice(0, -1).concat({ role: 'ai', content: generatedCode, isCode: isCodeContent, isCollapsed: isCodeContent }));
+            setPreviewCode(generatedCode);
+            setIsGeneratingFirstTime(false);
+            setSelectedImages([]); // Clear images after successful generation
+
+        } catch (error) {
+            setAiError(`Failed to call Project PixelCode X API: ${error.message}`);
+            setChatHistory(prev => prev.slice(0, -1).concat({ role: 'ai', content: `Error generating code from Project PixelCode X: ${error.message}`, isCode: false, isCollapsed: false }));
+            console.error("Project PixelCode X API call error:", error);
+        } finally {
+            setIsLoadingAI(false);
+        }
+    };
+
+    // --- Deployment Functions ---
+    const handleDownloadHtml = () => {
+        if (!previewCode || previewCode.startsWith('<!--')) {
+            showTemporaryNotification("Please generate code first before downloading.");
+            return;
+        }
+        const blob = new Blob([previewCode], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'my-generated-website.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showTemporaryNotification("HTML file downloaded!");
+        setShowDeploymentModal(false);
+    };
+
+    const handleCopyCode = () => {
+        if (!previewCode || previewCode.startsWith('<!--')) {
+            showTemporaryNotification("Please generate code first before copying.");
+            return;
+        }
+        try {
+            const textarea = document.createElement('textarea');
+            textarea.value = previewCode;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showTemporaryNotification('Code copied to clipboard!');
+            setShowDeploymentModal(false);
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            showTemporaryNotification('Failed to copy code. Please try again or download the file.');
+        }
+    };
+
+    // Toggle collapse state for AI messages in chat history
+    const toggleCodeCollapse = (index) => {
+        setChatHistory(prev => prev.map((msg, i) => 
+            i === index ? { ...msg, isCollapsed: !msg.isCollapsed } : msg
+        ));
+    };
+
+    // Function to hide the preview panel
+    const hidePreviewPanel = () => {
+        setIsHidingPreview(true); // Trigger exit animation
+        setTimeout(() => {
+            setIsGeneratingFirstTime(true); // Hide after animation
+            setIsHidingPreview(false); // Reset animation state
+        }, 500); // Duration of slideOutLeft animation
+    };
+
+    return (
+        <div className="flex h-screen bg-gray-900 text-gray-100 font-inter text-sm">
+            <style>{customStyles}</style>
+
+            {/* Notification Component */}
+            {showNotification && (
+                <div className={`notification ${showNotification ? '' : 'hide'}`}>
+                    {notificationMessage}
+                </div>
+            )}
+
+            {/* Branding Overlay */}
+            {showBrandingOverlay && (
+                <div className="branding-overlay">
+                    <a href="http://vlog.edu.ezyro.com" target="_blank" rel="noopener noreferrer" className="branding-logo">
+                        <img
+                            src="https://11qefo24i0zqk27hdmkqpw3ldojwitj0tde8o2rvaqr9oolowm-h766678603.scf.usercontent.goog/image_912e92.png"
+                            alt="Soumya Sagar Logo"
+                            className="h-24 w-24 object-contain rounded-full shadow-lg"
+                            onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/100x100/000000/FFFFFF?text=LOGO_ERROR'; }} // React function for onError
+                        />
+                    </a>
+                    <p className="text-xl md:text-2xl font-bold text-gray-200">Design with Love From India</p>
+                    <p className="text-lg md:text-xl font-medium text-indigo-400">BY Soumya Sagar</p>
+                </div>
+            )}
+
+            {/* Main container with dynamic width for chat panel */}
+            <div className={`flex flex-col p-4 panel-bg shadow-xl rounded-r-2xl transition-all duration-500 ease-in-out ${!isGeneratingFirstTime ? 'w-1/2' : 'w-full'}`}>
+                <h2 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
+                    <MessageSquare size={20} /> Project PixelCode X
+                </h2>
+
+                {firebaseError && (
+                    <div className="bg-red-800 text-red-100 p-3 rounded-lg mb-4 text-center">
+                        {firebaseError}
+                    </div>
+                )}
+                {/* User ID display removed for clutter-free UI */}
+
+                {/* Chat History Display */}
+                <div className="flex-grow overflow-y-auto scrollbar-thin p-3 bg-gray-700 rounded-xl shadow-inner mb-4">
+                    {chatHistory.length === 0 ? (
+                        <p className="text-gray-400 text-center py-10 animate-fade-in-up">
+                            Describe the advanced website you want to build. <br />
+                            (e.g., "Create a modern landing page with a hero section and a contact form.")
+                        </p>
+                    ) : (
+                        chatHistory.map((msg, index) => (
+                            <div key={index} className={`mb-4 p-3 rounded-lg max-w-[90%] transition-all duration-300 ${msg.role === 'user' ? 'chat-bubble-user ml-auto rounded-br-none' : 'chat-bubble-ai mr-auto rounded-bl-none'}`}>
+                                <p className="font-semibold mb-1">{msg.role === 'user' ? 'You' : 'AI Assistant'}</p>
+                                {msg.isCode ? (
+                                    <>
+                                        <button
+                                            onClick={() => toggleCodeCollapse(index)}
+                                            className="text-indigo-300 hover:text-indigo-100 text-xs font-semibold flex items-center gap-1 mb-2"
+                                        >
+                                            {msg.isCollapsed ? (
+                                                <> <ChevronDown size={14} /> Show Code </>
+                                            ) : (
+                                                <> <ChevronUp size={14} /> Hide Code </>
+                                            )}
+                                        </button>
+                                        {!msg.isCollapsed && (
+                                            <pre className="whitespace-pre-wrap text-sm font-mono break-words bg-gray-800 p-2 rounded max-h-60 overflow-y-auto scrollbar-thin">
+                                                {msg.content}
+                                            </pre>
+                                        )}
+                                        {msg.isCollapsed && (
+                                            <div className="text-gray-400 text-xs mt-1">Code collapsed. Click "Show Code" to view.</div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <pre className="whitespace-pre-wrap text-sm font-mono break-words">
+                                        {msg.content}
+                                    </pre>
+                                )}
+                            </div>
+                        ))
+                    )}
+                    <div ref={chatHistoryEndRef} /> {/* Scroll to this element */}
+                </div>
+
+                {/* Chat Input */}
+                <div className="flex flex-col">
+                    {aiError && <p className="text-red-400 text-sm mb-2">{aiError}</p>}
+                    
+                    {/* Image Previews */}
+                    {selectedImages.length > 0 && (
+                        <div className="image-preview-container">
+                            {selectedImages.map((img, index) => (
+                                <div key={index} className="image-preview-item">
+                                    <img src={img.previewUrl} alt={`Selected ${index}`} />
+                                    <XCircle 
+                                        size={18} 
+                                        className="remove-image-btn text-white" 
+                                        onClick={() => removeImage(index)} 
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="flex items-center gap-2 mt-2">
+                        <textarea
+                            className="flex-grow p-3 rounded-lg input-bg border border-gray-600 focus:outline-none focus:border-accent h-24 text-white placeholder-gray-400 resize-none transition-all duration-200"
+                            value={currentPrompt}
+                            onChange={(e) => setCurrentPrompt(e.target.value)}
+                            placeholder="Describe the advanced website you want to build..."
+                            disabled={isLoadingAI}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) { // Allow shift+Enter for new line
+                                    e.preventDefault();
+                                    generateCodeWithAI();
+                                }
+                            }}
+                        ></textarea>
+                        
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            onChange={handleImageUpload}
+                        />
+                        {/* Image Upload Button */}
+                        <button
+                            onClick={() => fileInputRef.current.click()}
+                            className="p-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors duration-200"
+                            title="Upload Images"
+                            disabled={isLoadingAI}
+                        >
+                            <Image size={24} />
+                        </button>
+                    </div>
+
+                    <button
+                        onClick={generateCodeWithAI}
+                        className="mt-3 w-full btn-primary text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        disabled={isLoadingAI}
+                    >
+                        {isLoadingAI && (
+                            <svg className="animate-spin -ml-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        )}
+                        {isLoadingAI ? 'Generating Advanced Code... This might take a moment.' : 'Generate Advanced Code'}
+                    </button>
+
+                    {/* Deploy Button */}
+                    <button
+                        onClick={() => setShowDeploymentModal(true)}
+                        className="mt-3 w-full btn-secondary-purple text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+                        disabled={isGeneratingFirstTime || isLoadingAI} // Disable if no code generated or still loading
+                    >
+                        <Rocket size={20} /> Deploy Your Website
+                    </button>
+                </div>
+            </div>
+
+            {/* Right Panel - Live Preview - Conditionally rendered and animated */}
+            {!isGeneratingFirstTime && (
+                <div className={`flex-grow w-1/2 flex flex-col p-4 panel-bg shadow-xl rounded-l-2xl ml-4 ${isHidingPreview ? 'preview-slide-out' : 'preview-slide-in'}`}>
+                    <h2 className="text-xl font-bold mb-4 text-white flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-2"><Monitor size={20} /> Live Preview</span>
+                        <button
+                            onClick={hidePreviewPanel}
+                            className="btn-secondary-gray text-white py-1.5 px-3 rounded-lg font-semibold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                        >
+                            <ChevronLeft size={16} /> Go Back
+                        </button>
+                    </h2>
+                    <div className="flex-grow bg-gray-700 rounded-xl shadow-inner p-2 overflow-hidden flex items-center justify-center">
+                        <iframe ref={previewIframeRef} title="Live Code Preview"></iframe>
+                    </div>
+                </div>
+            )}
+
+            {/* Deployment Modal */}
+            {showDeploymentModal && (
+                <>
+                    <div className="overlay-backdrop" onClick={() => setShowDeploymentModal(false)}></div>
+                    <div className="deployment-modal fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <h3 className="text-2xl font-bold mb-4 text-white">Deployment Options</h3>
+                        <p className="text-gray-300 mb-6">Choose how you'd like to deploy your generated website.</p>
+
+                        <div className="space-y-4">
+                            <button
+                                onClick={handleDownloadHtml}
+                                className="w-full btn-secondary-green text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                            >
+                                <Download size={18} /> Download HTML File
+                            </button>
+                            <button
+                                onClick={handleCopyCode}
+                                className="w-full btn-secondary-blue text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            >
+                                <Copy size={18} /> Copy HTML Code
+                            </button>
+                            <div className="bg-gray-700 p-4 rounded-lg text-gray-300 border border-gray-600">
+                                <h4 className="font-semibold text-lg mb-2">Deploy with Static Hosting:</h4>
+                                <p className="mb-2">For a quick deployment, you can use services like Netlify, Vercel, or GitHub Pages:</p>
+                                <ul className="list-disc list-inside text-sm space-y-1">
+                                    <li>**Netlify/Vercel:** Create an account, link your Git repository (or drag & drop your HTML file), and deploy in minutes.</li>
+                                    <li>**GitHub Pages:** Push your HTML file to a GitHub repository named `your-username.github.io` (or a `docs` folder in another repo).</li>
+                                </ul>
+                                <p className="mt-2 text-xs text-gray-400">Remember to include any necessary assets (images, fonts) if your site uses them outside of the generated HTML.</p>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowDeploymentModal(false)}
+                            className="mt-6 w-full btn-secondary-gray text-white py-2.5 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
+export default App;
