@@ -1,7 +1,7 @@
 # 💻 My Projects Repository
 
 Welcome to the **My Projects** repository by [Arshad Ali](https://github.com/arshadali-coder).  
-Yahan pe mere kuch Python-based practice aur learning projects ka collection hai — har folder ek individual mini-project ya concept represent karta hai. Yeh repo mainly personal learning aur open-source contribution ke liye banaya gaya hai.
+Yahan pe mere kuch Python-based practice aur Web development ke learning projects ka collection hai — har folder ek individual mini-project ya concept represent karta hai. Yeh repo mainly personal learning aur open-source contribution ke liye banaya gaya hai.
 
 ---
 
