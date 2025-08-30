@@ -1,39 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Project Hub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arshad Ali | Portfolio</title>
   <style>
     :root {
-      --primary: #ff6f61;
-      --secondary: #ffcc00;
-      --accent: #9c27b0;
-      --background: linear-gradient(135deg, #2c003e, #4a001c, #3b2100);
-      --card-bg: rgba(42, 42, 64, 0.95);
-      --text-color: #ffffff;
+      --primary: #1e3a8a; /* navy blue */
+      --accent: #f97316;  /* orange */
+      --bg: #f9f9f9;
+      --card: #ffffff;
+      --text: #222;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--background);
-      background-attachment: fixed;
-      background-size: cover;
-      color: var(--text-color);
-      margin: 0;
-      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--card);
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    header h1 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    nav a {
+      margin: 0 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      padding: 80px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    h2 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin-bottom: 15px;
       text-align: center;
     }
 
-    h1 {
-      font-size: 2.8rem;
-      margin: 0.5em 0 0.2em;
+    /* Hero */
+    .hero {
+      padding-top: 100px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
       color: var(--primary);
-      font-weight: 800;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #555;
+    }
+    .hero .buttons {
+      margin-top: 20px;
+    }
+    .hero .buttons a {
+      display: inline-block;
+      margin: 8px;
+      padding: 10px 20px;
+      border-radius: 25px;
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .hero .buttons a:hover {
+      background: var(--accent);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 20px;
+      margin: 15px 0;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Skills */
+    .skills {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
+      gap: 12px;
+      text-align: center;
+    }
+    .skill {
+      background: var(--card);
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 600;
+      color: var(--primary);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+    }
+
+    /* Projects */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+      gap: 20px;
+    }
+    .projects .card h3 {
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .projects .card p {
+      font-size: 0.95rem;
+      color: #444;
+    }
+    .projects .card a {
+      display: inline-block;
+      margin-top: 10px;
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: var(--primary);
+      color: white;
+      margin-top: 40px;
+    }
+
+    @media (max-width:600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Arshad Ali</h1>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Hi, I'm Arshad Ali 👋</h1>
+    <p>BTech Computer Engineering Student | Web Developer | Aspiring Data Scientist</p>
+    <div class="buttons">
+      <a href="CV Resume - Arshad Ali.pdf" target="_blank">Download CV</a>
+      <a href="https://github.com/arshadali-coder" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/arshad-ali-6a1250361/" target="_blank">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <h2>About Me</h2>
+    <div class="card">
+      <p>
+        I'm a BTech Computer Engineering student at Jamia Millia Islamia (2025-2029).
+        Passionate about building efficient, user-friendly applications.
+        Interested in AI, Web Development, and Data Science.
+      </p>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <h2>Skills</h2>
+    <div class="skills">
+      <div class="skill">HTML & CSS</div>
+      <div class="skill">JavaScript</div>
+      <div class="skill">Python</div>
+      <div class="skill">Flask</div>
+      <div class="skill">NoSQL (Firestore)</div>
+      <div class="skill">AI Integration</div>
+      <div class="skill">UI/UX</div>
+      <div class="skill">Figma Basics</div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="projects">
+      <div class="card">
+        <h3>MusixGrab 🎵</h3>
+        <p>A full-stack music platform that allows users to search, play, save, and download music instantly.</p>
+        <a href="https://musixgrab.onrender.com" target="_blank">View Project</a>
+      </div>
+      <div class="card">
+        <h3>AI WebGen Architect 🤖</h3>
+        <p>Generate fully functional websites from simple one-line prompts using AI.</p>
+        <a href="https://ai-webgen-architect.onrender.com" target="_blank">View Project</a>
+      </div>
+      <div class="card">
+        <h3>EchoWhisper 💬</h3>
+        <p>An emotional AI assistant that helps users maintain mental well-being. Developed at Bolt Hackathon.</p>
+      </div>
+      <div class="card">
+        <h3>Chatlytic 📊</h3>
+        <p>Transforms WhatsApp chats into an interactive UI with analytics & AI-powered Q&A.</p>
+      </div>
+      <div class="card">
+        <h3>AI Logo Maker 🎨</h3>
+        <p>Generates styled backgrounds & text effects for logos with AI.</p>
+        <a href="https://arshadali-projects.netlify.app/logo_maker/" target="_blank">View Project</a>
+      </div>
+      <div class="card">
+        <h3>Vault OS 🔐</h3>
+        <p>A minimal password manager coded in Python.</p>
+        <a href="https://arshadali-projects.netlify.app/vault-os/" target="_blank">View Project</a>
+      </div>
+      <div class="card">
+        <h3>Fav Songs 🎶</h3>
+        <p>A personal webpage showcasing some of my favorite songs.</p>
+        <a href="https://fav-songs-arshad-ali.onrender.com" target="_blank">View Project</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section id="education">
+    <h2>Education</h2>
+    <div class="card">
+      <p><strong>Jamia Millia Islamia</strong> – BTech (Computer Engineering)<br>2025 – 2029</p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <h2>Contact</h2>
+    <div class="card">
+      <p>Email: <a href="mailto:arshadali.coder@gmail.com">arshadali.coder@gmail.com</a></p>
+      <p>Phone: <a href="tel:+918651274965">+91 8651274965</a></p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/arshad-ali-6a1250361/" target="_blank">linkedin.com/in/arshad-ali</a></p>
+      <p>GitHub: <a href="https://github.com/arshadali-coder" target="_blank">github.com/arshadali-coder</a></p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 Arshad Ali | Built with passion
+  </footer>
+
+</body>
+</html>
       letter-spacing: 1.2px;
       background: linear-gradient(to right, #ff6f61, #ffcc00, #9c27b0);
       -webkit-background-clip: text;
